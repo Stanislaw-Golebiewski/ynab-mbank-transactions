@@ -5,6 +5,18 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "loguru>=0.7.3",
     "pandas>=2.2.3",
+    "pydantic>=2.0,<3.0",
+    "python-dotenv>=1.1.1",
     "streamlit>=1.45.0",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "flake8>=7.1.2",
+    "ipython>=9.4.0",
+    "python-lsp-ruff>=2.2.2",
+    "python-lsp-server[all]>=1.13.0",
 ]
