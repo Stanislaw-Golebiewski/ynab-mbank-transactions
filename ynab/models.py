@@ -1,7 +1,8 @@
-from pydantic import BaseModel
-from typing import Optional
-from enum import Enum
 from datetime import date, datetime
+from enum import Enum
+from typing import Optional
+
+from pydantic import BaseModel
 
 
 class AccountType(str, Enum):
@@ -18,6 +19,7 @@ class AccountType(str, Enum):
     car_loan = "carLoan"
     personal_loan = "personalLoan"
     medical_debt = "medicalDebt"
+
 
 class Budget(BaseModel):
     id: str
@@ -46,6 +48,11 @@ class BankTransaction(BaseModel):
 
     def __hash__(self):
         return hash((self.date, self.amount))
+
+    def __eq__(self, other):
+        if not isinstance(other, BankTransaction):
+            return NotImplemented
+        return (self.date, self.amount) == (other.date, other.amount)
 
 
 class YNABTransaction(BaseModel):
@@ -81,4 +88,3 @@ class AddTransactionsResult(BaseModel):
     number_of_transactions: int | None = None
     transaction_ids: list[str] | None = None
     error_msg: str | None = None
-
