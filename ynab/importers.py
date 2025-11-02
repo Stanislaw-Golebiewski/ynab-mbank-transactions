@@ -11,7 +11,6 @@ from .models import BankTransaction
 
 def _get_date_from_title_field(field: str) -> datetime | None:
     match = re.search(r"DATA\s+TRANSAKCJI:\s*(\d{4}-\d{2}-\d{2})", field)
-    print(field, match)
     if match:
         date_str = match.group(1)
         transaction_date = datetime.strptime(date_str, "%Y-%m-%d").date()
@@ -121,9 +120,14 @@ def load_bank_transactions_from_file(
         out.append(BankTransaction(**transaction))
     logger.info(f"Loaded {len(out)} lines from file. File type decetcted: {file_type}")
     if saldo_line:
-        final_money_on_account = _parse_money_value_cell(
-            saldo_line.removesuffix(";").split(";")[-1]
-        )
+        try:
+            final_money_on_account = _parse_money_value_cell(
+                saldo_line.removesuffix(";").rstrip("\r").split(";")[-1]
+            )
+        except ValueError:
+            final_money_on_account = _parse_money_value_cell(
+                saldo_line.removesuffix(";").rstrip("\r").split(";")[-2]
+            )
         logger.info("Also decected final account saldo!")
         return out, final_money_on_account
     return out, None

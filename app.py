@@ -76,19 +76,24 @@ def main():
         with st.form("bank_form"):
             csv_file = st.file_uploader("Upload bank CSV file", type=["csv"])
             bank_balance_float = st.number_input(
-                "Current bank balance", min_value=0.0, step=0.01
+                "Current bank balance", min_value=0.0, step=0.01, key="bank_balance"
             )
             submitted = st.form_submit_button("Run Sync")
         if submitted:
-            if csv_file is None or bank_balance_float == 0.0:
-                st.warning("Please upload a file and enter a balance.")
+            if csv_file is None:
+                st.warning("Please upload a file.")
             else:
                 with st.spinner("Processing..."):
                     try:
-                        bank_transactions, _ = load_bank_transactions_from_file(
-                            csv_file
+                        bank_transactions, bank_balace_from_file = (
+                            load_bank_transactions_from_file(csv_file)
                         )
-                        bank_balance_milli = int(bank_balance_float * 1000)
+                        current_balance = (
+                            bank_balace_from_file
+                            if bank_balace_from_file is not None
+                            else bank_balance_float
+                        )
+                        bank_balance_milli = int(current_balance * 1000)
 
                         result = reconcile_transactions(
                             bank_transactions=bank_transactions,
